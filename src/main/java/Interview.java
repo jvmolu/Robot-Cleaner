@@ -3,50 +3,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-enum Algorithm {
-    DFS,
-    BFS
-}
-
 public class Interview {
     static int cellsRemaining = 0;
-
-    static public ArrayList<ArrayList<Integer>> getMatrix(int n, int m) {
-        ArrayList<ArrayList<Integer>> matrix = new ArrayList<>();
-        for(int i = 0; i < n; i++) {
-            ArrayList<Integer> row = new ArrayList<>();
-            for(int j = 0; j < m; j++) {
-                if(Math.random() > 0.5)
-                    row.add(0);
-                else
-                    row.add(1);
-            }
-            matrix.add(row);
-        }
-        return matrix;
-    }
-
-    static public ArrayList<Integer> findFirstFreeSpot(ArrayList<ArrayList<Integer>> room) {
-        for(int i = 0; i < room.size(); i++) {
-            for(int j = 0; j < room.get(i).size(); j++) {
-                if(room.get(i).get(j) == 1) {
-                    System.out.println("Found free spot at: " + i + ", " + j);
-                    return new ArrayList<>(List.of(i, j));
-                }
-            }
-        }
-        // No free spot found
-        return new ArrayList<>(List.of(-1, -1));
-    }
-
-    static public void printMatrix(ArrayList<ArrayList<Integer>> room) {
-        for (ArrayList<Integer> integers : room) {
-            for (Integer integer : integers) {
-                System.out.print(integer + " ");
-            }
-            System.out.println();
-        }
-    }
 
     static public int solveRobotDFSUtil(ArrayList<ArrayList<Integer>> room, Robot robot, Set<List<Integer>> visited) {
 
@@ -106,7 +64,7 @@ public class Interview {
     static int solveRobot(ArrayList<ArrayList<Integer>> room, Robot robot, Algorithm algorithm) {
 
         // Get Starting Position
-        ArrayList<Integer> startingPosition = findFirstFreeSpot(room);
+        ArrayList<Integer> startingPosition = Helper.findFirstFreeSpot(room);
 
         if(startingPosition.get(0) == -1 && startingPosition.get(1) == -1) {
             System.out.println("No free spot found");
@@ -115,21 +73,11 @@ public class Interview {
 
         robot.setPosition(startingPosition.get(0), startingPosition.get(1));
 
-        // Find Number of Zeroes | MAX CELLS TO CLEAN -> STOP AFTER ALL CELLS ARE CLEANED
-        int oneCount = 0;
-        for (ArrayList<Integer> integers : room) {
-            for (Integer integer : integers) {
-                if (integer == 1) {
-                    oneCount++;
-                }
-            }
-        }
+        // MAX CELLS TO CLEAN -> STOP AFTER ALL CELLS ARE CLEANED
+        cellsRemaining = Helper.getOnesCount(room);
 
-        // VISITED of x,y
+        // Visited Array
         Set<List<Integer>> visited = new HashSet<>();
-
-        // DFS
-        cellsRemaining = oneCount;
 
         switch (algorithm) {
             case DFS -> {
@@ -147,9 +95,9 @@ public class Interview {
 
     public static void main(String[] args) {
 
-        ArrayList<ArrayList<Integer>> room = getMatrix(7, 7);
+        ArrayList<ArrayList<Integer>> room = Helper.getMatrix(7, 7);
 
-        printMatrix(room);
+        Helper.printMatrix(room);
 
         Robot robot = new Robot(0, 0, 0);
         int dfsCount = solveRobot(room, robot, Algorithm.DFS);
