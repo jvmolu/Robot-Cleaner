@@ -3,12 +3,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Interview {
+enum Algorithm {
+    DFS,
+    BFS
+}
 
+public class Interview {
     static int cellsRemaining = 0;
 
     static public ArrayList<ArrayList<Integer>> getMatrix(int n, int m) {
-
         ArrayList<ArrayList<Integer>> matrix = new ArrayList<>();
         for(int i = 0; i < n; i++) {
             ArrayList<Integer> row = new ArrayList<>();
@@ -21,7 +24,6 @@ public class Interview {
             matrix.add(row);
         }
         return matrix;
-
     }
 
     static public ArrayList<Integer> findFirstFreeSpot(ArrayList<ArrayList<Integer>> room) {
@@ -55,7 +57,8 @@ public class Interview {
         visited.add(robot.getPosition());
 
         cellsRemaining--;
-        if(cellsRemaining == 0) { // STOP HERE IF ALL CELLS ARE CLEANED
+        // STOP HERE IF ALL CELLS ARE CLEANED
+        if(cellsRemaining == 0) {
             return steps;
         }
 
@@ -72,9 +75,11 @@ public class Interview {
                 robot.move(true); // MOVE
                 steps++;
 
-                steps += solveRobotDFSUtil(room, robot, visited); // Solve for rest of the room
+                // Solve for rest of the room
+                steps += solveRobotDFSUtil(room, robot, visited);
 
-                if(cellsRemaining == 0) { // STOP HERE IF ALL CELLS ARE CLEANED
+                // STOP HERE IF ALL CELLS ARE CLEANED
+                if(cellsRemaining == 0) {
                     return steps;
                 }
 
@@ -98,7 +103,7 @@ public class Interview {
         return steps;
     }
 
-    static int solveRobotDFS(ArrayList<ArrayList<Integer>> room, Robot robot) {
+    static int solveRobot(ArrayList<ArrayList<Integer>> room, Robot robot, Algorithm algorithm) {
 
         // Get Starting Position
         ArrayList<Integer> startingPosition = findFirstFreeSpot(room);
@@ -125,9 +130,20 @@ public class Interview {
 
         // DFS
         cellsRemaining = oneCount;
-        return solveRobotDFSUtil(room, robot, visited);
-    }
 
+        switch (algorithm) {
+            case DFS -> {
+                return solveRobotDFSUtil(room, robot, visited);
+            }
+            case BFS -> {
+                return -1;
+            }
+            default -> {
+                System.out.println("Invalid Algorithm");
+                return -1;
+            }
+        }
+    }
 
     public static void main(String[] args) {
 
@@ -136,7 +152,7 @@ public class Interview {
         printMatrix(room);
 
         Robot robot = new Robot(0, 0, 0);
-        int dfsCount = solveRobotDFS(room, robot);
+        int dfsCount = solveRobot(room, robot, Algorithm.DFS);
 
         System.out.println("DFS Count: " + dfsCount);
     }
